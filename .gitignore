@@ -5,3 +5,4 @@ lb_analytics_core/dbt_packages/
 lb_analytics_core/logs/
 logs/
 logs/
+.user.yml

@@ -1,0 +1,8 @@
+lb_analytics_core:          # must match "profile:" in dbt_project.yml
+  target: dev               # which output to use by default
+  outputs:
+    dev:
+      type: duckdb
+      path: "{{ env_var('LUXE_BEAUTY_DUCKDB_PATH') }}"
+      schema: analytics     # default schema for models without a layer schema
+      threads: 4

@@ -1,0 +1,7 @@
+.venv/
+*.duckdb
+lb_analytics_core/target/
+lb_analytics_core/dbt_packages/
+lb_analytics_core/logs/
+logs/
+logs/

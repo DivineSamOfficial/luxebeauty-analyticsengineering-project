@@ -1,0 +1,62 @@
+version: 2
+
+sources:
+  - name: sales
+    description: >
+      Sales module of the LuxeBeauty OLTP system (MySQL), replicated into DuckDB
+      by the platform loader. Covers the order process: order headers, order lines,
+      order status changes and customer payment attempts.
+    schema: raw
+    config:
+      loaded_at_field: updated_at
+      freshness:
+        warn_after: {count: 1, period: day}
+        error_after: {count: 3, period: day}
+
+    tables:
+      - name: orders
+        description: >
+          Order header. One row per customer order: who ordered, when, through which
+          sales and marketing channel, fulfilment type (SHIP / STORE_PICKUP /
+          COUNTER_SALE) and current order status.
+        columns:
+          - name: order_id
+            description: Surrogate primary key of the order.
+            data_tests:
+              - unique
+              - not_null
+
+      - name: order_line_items
+        description: >
+          Order lines. One row per product on an order, with quantity, unit price,
+          discount and GST as captured when the order was placed.
+          Driving table for fct_order_lines.
+        columns:
+          - name: order_line_item_id
+            description: Surrogate primary key of the order line.
+            data_tests:
+              - unique
+              - not_null
+
+      - name: order_status_history
+        description: >
+          Order status history. One row per status change of an order, with the
+          from/to status and when it changed. Used for lead times and the stage
+          at which orders were cancelled.
+        columns:
+          - name: order_status_history_id
+            description: Surrogate primary key of the status change event.
+            data_tests:
+              - unique
+              - not_null
+
+      - name: customer_payments
+        description: >
+          Customer payments. One row per payment attempt (initiated / success /
+          failed / reversed). Only successful payments are allocated to invoices.
+        columns:
+          - name: customer_payment_id
+            description: Surrogate primary key of the payment attempt.
+            data_tests:
+              - unique
+              - not_null

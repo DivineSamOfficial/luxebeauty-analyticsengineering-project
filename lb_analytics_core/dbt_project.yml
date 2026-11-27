@@ -31,4 +31,55 @@ clean-targets:         # directories to be removed by `dbt clean`
 # files using the `{{ config(...) }}` macro.
 models:
   lb_analytics_core:
+
+    # BASE (bronze): 1:1 with source tables. Rename + cast only.
+    base:
+      +schema: base
+      +materialized: view
+      master_data:
+        +tags: ["master_data"]
+      sales:
+        +tags: ["sales"]
+      invoicing:
+        +tags: ["invoicing"]
+      shipping:
+        +tags: ["shipping"]
+      returns:
+        +tags: ["returns"]
+      inventory:
+        +tags: ["inventory"]
+
+    # STAGING (silver): cleaned, business-ready entities.
+    staging:
+      +schema: staging
+      +materialized: view
+      master_data:
+        +tags: ["master_data"]
+      sales:
+        +tags: ["sales"]
+      invoicing:
+        +tags: ["invoicing"]
+      shipping:
+        +tags: ["shipping"]
+      returns:
+        +tags: ["returns"]
+      inventory:
+        +tags: ["inventory"]
+
+    # INTERMEDIATE: reusable joins/logic, inlined as CTEs (no DB object).
+    intermediate:
+      +materialized: ephemeral
+      sales:
+        +tags: ["sales"]
+
+    # MARTS (gold): what dashboards query.
+    marts:
+      +schema: marts
+      +materialized: table
+      dim:
+        +tags: ["dim"]
+      sales:
+        +tags: ["sales"]
+      supply_chain:
+        +tags: ["supply_chain"]
     # Config indicated by + and applies to all files under models/example/

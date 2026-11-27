@@ -1,0 +1,56 @@
+version: 2
+
+sources:
+  - name : invoicing
+    description: >
+      Invoicing module of the LuxeBeauty OLTP system (MySQL), replicated into DuckDB
+      by the platform loader. Covers the invoice process: invoice headers, invoice lines,
+      invoice status changes and customer payments. 
+    schema: raw
+    config:
+      loaded_at_field: updated_at
+      freshness:
+        warn_after: {count: 1, period: day}
+        error_after: {count: 3, period: day}
+
+    tables:
+      - name: invoices
+        description: >
+          Tax invoice: one per shipment at dispatch, or one per handover for store sales
+          The legal bill to the customer, one per shipment (or per counter sale). The amount the customer owes. Cancelled invoices are kept, marked cancelled.
+        columns:
+          - name: invoice_id
+            description: Surrogate primary key of the invoice.
+            data_tests:
+              - unique
+              - not_null
+
+      - name: invoice_line_items
+        description: >
+          Lines of an invoice:	Product lines, plus one line for any shipping charge, each with its GST.
+        columns:
+          - name: invoice_line_item_id
+            description: Surrogate primary key of the invoice line.
+            data_tests:
+              - unique
+              - not_null
+
+      - name: credit_notes
+        description: >
+          A document that reduces an invoice: for a returned item, a parcel that came back undelivered, or a price reduction.
+        columns:
+          - name: credit_note_id
+            description: Surrogate primary key of the credit note.
+            data_tests:
+              - unique
+              - not_null
+
+      - name: credit_note_line_items
+        description: >
+          Lines of a credit note	The quantity and amount credited per invoice line.
+        columns:
+          - name: credit_note_line_item_id
+            description: Surrogate primary key of the credit note line.
+            data_tests:
+              - unique
+              - not_null

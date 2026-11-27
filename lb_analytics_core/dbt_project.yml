@@ -82,4 +82,3 @@ models:
         +tags: ["sales"]
       supply_chain:
         +tags: ["supply_chain"]
-    # Config indicated by + and applies to all files under models/example/
